@@ -28,10 +28,9 @@ var result = {};
  ***/
 
 var page = require('webpage').create();
-page.settings.loadImages = false;
-page.settings.localToRemoteUrlAccessEnabled = true;
-page.settings.resourceTimeout = 3000; // 15 seconds
-page.settings.userAgent = 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36';
+for (var k in args.page_settings)
+  page.settings[k] = args.page_settings[k];
+
 page.onResourceTimeout = function(e) {
   console.log('timeout');
   phantom.exit(1);
@@ -70,6 +69,7 @@ page.open(args.url, function (status)
   else 
   {     
     var code = args.inject_code;
+    var content = page.content;
     page.includeJs("http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js", 
       function() 
       {
@@ -91,17 +91,9 @@ page.open(args.url, function (status)
 
 var export_flag = false;
 
-// Wait for result
-(function wait_for_flag()
-{
-  if (export_flag)
-    return exportf(result);
-  setTimeout(arguments.callee, 100);  
-})();
-
 function tunnel_result_and_exit(res)
 {
-  result = res;
+  result.inject = res;
   exit_now();
 }
 
@@ -110,11 +102,19 @@ function exit_now()
   export_flag = true;  
 }
 
-var exportf = function(ret)
+var exportf = function(res)
 {
   var fs = require('fs');
 
-  result.sys = {page: page.content};
-  fs.write(args.phantomjs_output_tunnel_file, JSON.stringify(result), 'w');  
+  res.sys = {page: page.content};
+  fs.write(args.phantomjs_output_tunnel_file, JSON.stringify(res), 'w');  
   phantom.exit();
 };
+
+// Wait for result
+(function wait_for_flag()
+{
+  if (export_flag)
+    return exportf(result);
+  setTimeout(arguments.callee, 100);  
+})();

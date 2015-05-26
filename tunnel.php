@@ -2,34 +2,58 @@
 
 class tunnel
 {
+  private $prefix = "";
+  private $postfix = "";
+  private $infix = "";
+
   public function ExecuteTask($jsfile, $arguments = NULL)
   {
-    $tunnels = $this->CreateInfrastructure();
-    $in_string = json_encode($arguments);
+    $tunnels = $this->CreateInfrastructure($arguments);
 
-    file_put_contents($tunnels['in'], $in_string);
-    $res = $this->Execute($jsfile, [$tunnels['in'], $tunnels['out']]);
-    $result = file_get_contents($tunnels['out']);
+    $res = $this->Execute($jsfile, $tunnels);
 
-    $this->RemoveInfrastructure($tunnels);
+    $result = $this->RemoveInfrastructure($tunnels);
 
     return json_decode($result, true);
   }
 
-  private function CreateInfrastructure()
+  private function CreateFixes($arguments)
   {
-    $random = time();
-    return
+    $this->infix = implode(" ", $arguments['command_line']);
+  }
+
+  private function RemoveFixes()
+  {
+    $this->infix = "";
+    $this->prefix = "";
+    $this->postfix = "";
+  }
+
+  private function CreateInfrastructure($arguments)
+  {
+    $this->CreateFixes($arguments);
+
+    $random = 0;//time();
+    $ret =
     [
       "in" => $this->MakeTmpFile("{$random}.in"),
       "out" => $this->MakeTmpFile("{$random}.out"),
     ];
+
+    $in_string = json_encode($arguments);
+    file_put_contents($ret['in'], $in_string);
+
+    return $ret;
   }
 
-  private function RemoveInfrastructure($i)
+  private function RemoveInfrastructure($tunnels)
   {
-    foreach ($i as $file)
+    $this->RemoveFixes();
+
+    $result = file_get_contents($tunnels['out']);
+    foreach ($tunnels as $file)
       unlink($file);
+    return $result;
   }
 
   private function MakeTmpFile($name = NULL)
@@ -54,8 +78,10 @@ class tunnel
     if ($this->ExtendedFileNameCheck($file) !== false)
       die("phpantomjs: Security warning ".__FILE__.":".__LINE__);
 
-    $query = "phantomjs '{$file}' ".(implode(' ', $args));
-    $res = exec($query);
+    $query = "phantomjs {$this->infix} '{$file}' ".(implode(' ', $args));
+    $exec = $this->prefix.$query.$this->postfix;
+
+    $res = system($exec);
 
     return $res;
   }
