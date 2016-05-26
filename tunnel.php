@@ -78,7 +78,7 @@ class tunnel
     if ($this->ExtendedFileNameCheck($file) !== false)
       die("phpantomjs: Security warning ".__FILE__.":".__LINE__);
 
-    $phantomjs = __DIR__"/bin/phantomjs";
+    $phantomjs = __DIR__."/bin/phantomjs";
     $query = "{$phantomjs} {$this->infix} '{$file}' ".(implode(' ', $args));
     $exec = $this->prefix.$query.$this->postfix;
 
