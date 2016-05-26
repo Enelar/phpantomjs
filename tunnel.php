@@ -82,7 +82,7 @@ class tunnel
     $query = "{$phantomjs} {$this->infix} '{$file}' ".(implode(' ', $args));
     $exec = $this->prefix.$query.$this->postfix;
 
-    $res = system($exec);
+    $res = exec($exec);
 
     return $res;
   }
