@@ -1,5 +1,8 @@
 {
- "require":
+  "name": "enelar/phpantomjs",
+  "description": "Bridge from php to phantomjs",
+  "license": "MIT",
+  "require":
   {
     "jakoch/phantomjs-installer": "~2.1.1"
   },
