@@ -20,5 +20,12 @@
     [
       "PhantomInstaller\\Installer::installPhantomJS"
     ]
+  },
+  "autoload":
+  {
+    "psr-4":
+    {
+      "phpantomjs\\": ""
+    }
   }
 }

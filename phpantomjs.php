@@ -1,4 +1,4 @@
-<?php
+<?php namespace phpantomjs;
 
 require('tunnel.php');
 
