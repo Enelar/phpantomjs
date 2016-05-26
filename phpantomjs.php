@@ -10,7 +10,19 @@ class phpantomjs
 
   public function Inject( $url, $code )
   {
-    $arguments =
+    $params = $this->BuildParams($url, $code);
+    return $this->Execute(__DIR__."/inject.js", $params);
+  }
+
+  public function Execute($script, $params)
+  {
+    $tunnel = new tunnel();
+    return $tunnel->ExecuteTask($script, $params);
+  }
+
+  public function BuildParams($url, $code)
+  {
+    return
     [
       "url" => $url,
       "cookies" => $this->cookies,
@@ -18,9 +30,6 @@ class phpantomjs
       "inject_code" => $code,
       "command_line" => $this->command_line,
     ];
-
-    $tunnel = new tunnel();
-    return $tunnel->ExecuteTask(__DIR__."/inject.js", $arguments);
   }
 
   public function __construct()
