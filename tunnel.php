@@ -74,11 +74,12 @@ class tunnel
     $args = [];
     foreach ($arguments as $a)
       $args[] = escapeshellarg($a);
-    
+
     if ($this->ExtendedFileNameCheck($file) !== false)
       die("phpantomjs: Security warning ".__FILE__.":".__LINE__);
 
-    $query = "phantomjs {$this->infix} '{$file}' ".(implode(' ', $args));
+    $phantomjs = __DIR__"/bin/phantomjs";
+    $query = "{$phantomjs} {$this->infix} '{$file}' ".(implode(' ', $args));
     $exec = $this->prefix.$query.$this->postfix;
 
     $res = system($exec);
