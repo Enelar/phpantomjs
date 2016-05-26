@@ -91,7 +91,7 @@ class tunnel
   {
     $needle = ["..", '"', "'", "\b"];
     foreach ($needle as $need)
-      if (($ret = strpos($file, $need, $offset)) !== false)
+      if (($ret = strpos($file, $need)) !== false)
         return $ret;
     return false;
   }
