@@ -19,8 +19,6 @@ class phpantomjs
       "command_line" => $this->command_line,
     ];
 
-    var_dump($arguments);
-
     $tunnel = new tunnel();
     return $tunnel->ExecuteTask(__DIR__."/inject.js", $arguments);
   }

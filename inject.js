@@ -36,13 +36,8 @@ page.onResourceTimeout = function(e) {
   phantom.exit(1);
 };
 
-phantom.addCookie({
-  'name'     : 'yandex_gid',   /* required property */
-  'value'    : 2,  /* required property */
-  'domain'   : 'market.yandex.ru',
-  'path'     : '/',                /* required property */
-  'expires'  : (new Date()).getTime() + (1000 * 60 * 60)   /* <-- expires in 1 hour */
-});
+for (var k in args.cookies)
+  phantom.addCookie(args.cookies[k]);
 
 page.onResourceError = function(resourceError) {
     page.reason = resourceError.errorString;
@@ -53,7 +48,7 @@ page.onResourceError = function(resourceError) {
  * Download page and execute code
  ***/
 
-page.open(args.url, function (status) 
+page.open(args.url, function (status)
 {
   if (status !== 'success')
   {
@@ -66,12 +61,12 @@ page.open(args.url, function (status)
 
     exit_now();
   }
-  else 
-  {     
+  else
+  {
     var code = args.inject_code;
     var content = page.content;
-    page.includeJs("http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js", 
-      function() 
+    page.includeJs("http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js",
+      function()
       {
         var res = page.evaluate(function(code)
           {
@@ -82,7 +77,7 @@ page.open(args.url, function (status)
         tunnel_result_and_exit(res)
       });
   }
-});  
+});
 
 
 /***
@@ -99,7 +94,7 @@ function tunnel_result_and_exit(res)
 
 function exit_now()
 {
-  export_flag = true;  
+  export_flag = true;
 }
 
 var exportf = function(res)
@@ -107,7 +102,7 @@ var exportf = function(res)
   var fs = require('fs');
 
   res.sys = {page: page.content};
-  fs.write(args.phantomjs_output_tunnel_file, JSON.stringify(res), 'w');  
+  fs.write(args.phantomjs_output_tunnel_file, JSON.stringify(res), 'w');
   phantom.exit();
 };
 
@@ -116,5 +111,5 @@ var exportf = function(res)
 {
   if (export_flag)
     return exportf(result);
-  setTimeout(arguments.callee, 100);  
+  setTimeout(arguments.callee, 100);
 })();
