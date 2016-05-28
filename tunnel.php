@@ -33,7 +33,7 @@ class tunnel
   {
     $this->CreateFixes($arguments);
 
-    $random = 0;//time();
+    $random = time();
     $ret =
     [
       "in" => $this->MakeTmpFile("{$random}.in"),
